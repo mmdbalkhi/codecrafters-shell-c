@@ -1,6 +1,7 @@
 #define COMMAND_COUNT (sizeof(commands) / sizeof(commands[0]))
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 typedef struct {
@@ -11,15 +12,34 @@ typedef struct {
   void (*execute)(char **args);
 } Command;
 
-void cmd_cd(char **args) { printf("Changing directory to: %s\n", args[1]); }
-
-void cmd_ls(char **args) { printf("Listing directory contents.\n"); }
-
-void cmd_exit(char **args) { printf("Exiting shell.\n"); }
+void cmd_cd(char **args);
+void cmd_ls(char **args);
+void cmd_exit(char **args);
 
 Command commands[] = {{"cd", "Change directory", 1, 1, cmd_cd},
                       {"ls", "List directory contents", 0, 0, cmd_ls},
-                      {"exit", "Exit the shell", 0, 0, cmd_exit}};
+                      {"exit", "Exit the shell", 0, 1, cmd_exit}};
+
+Command *get_command(const char *command_name) {
+  int num_commands = sizeof(commands) / sizeof(commands[0]);
+  for (int i = 0; i < num_commands; i++) {
+    if (strcmp(commands[i].name, command_name) == 0) {
+      return &commands[i];
+    }
+  }
+  return NULL; // اگر کامند پیدا نشد، NULL
+               // برمی‌گرداند
+}
+
+void cmd_cd(char **args) { printf("Changing directory to: %s\n", args[1]); }
+void cmd_ls(char **args) { printf("Listing directory contents.\n"); }
+
+void cmd_exit(char **args) {
+  if (args[1] != NULL) {
+    exit(atoi(args[1]));
+  }
+  exit(0);
+}
 
 void execute_command(const char *input) {
   char *args[10];
