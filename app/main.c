@@ -15,10 +15,14 @@ typedef struct {
 void cmd_cd(char **args);
 void cmd_ls(char **args);
 void cmd_exit(char **args);
+void cmd_echo(char **args);
 
-Command commands[] = {{"cd", "Change directory", 1, 1, cmd_cd},
-                      {"ls", "List directory contents", 0, 0, cmd_ls},
-                      {"exit", "Exit the shell", 0, 1, cmd_exit}};
+Command commands[] = {
+    {"cd", "Change directory", 1, 1, cmd_cd},
+    {"ls", "List directory contents", 0, 0, cmd_ls},
+    {"exit", "Exit the shell", 0, 1, cmd_exit},
+    {"echo", "Display a line of text", 1, 20, cmd_echo}, // TODO: max_arg prob
+};
 
 Command *get_command(const char *command_name) {
   int num_commands = sizeof(commands) / sizeof(commands[0]);
@@ -39,6 +43,19 @@ void cmd_exit(char **args) {
     exit(atoi(args[1]));
   }
   exit(0);
+}
+
+void cmd_echo(char **args) {
+  char echo_stomp[1024] = ""; // max_arg prob
+  int i = 1;
+  while (args[i] != NULL) {
+    if (i > 1) {
+      strcat(echo_stomp, " ");
+    }
+    strcat(echo_stomp, args[i]);
+    i++;
+  }
+  printf("%s\n", echo_stomp);
 }
 
 void execute_command(const char *input) {
