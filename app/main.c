@@ -16,13 +16,15 @@ void cmd_cd(char **args);
 void cmd_ls(char **args);
 void cmd_exit(char **args);
 void cmd_echo(char **args);
+void cmd_type(char **args);
 
 Command commands[] = {
     {"cd", "Change directory", 1, 1, cmd_cd},
     {"ls", "List directory contents", 0, 0, cmd_ls},
     {"exit", "Exit the shell", 0, 1, cmd_exit},
     {"echo", "Display a line of text", 1, 20, cmd_echo}, // TODO: max_arg prob
-};
+    {"type", "Display details about command", 1, 1, cmd_type}, // BUG: same
+}; // add type, rem min/max
 
 Command *get_command(const char *command_name) {
   int num_commands = sizeof(commands) / sizeof(commands[0]);
@@ -31,8 +33,7 @@ Command *get_command(const char *command_name) {
       return &commands[i];
     }
   }
-  return NULL; // اگر کامند پیدا نشد، NULL
-               // برمی‌گرداند
+  return NULL;
 }
 
 void cmd_cd(char **args) { printf("Changing directory to: %s\n", args[1]); }
@@ -58,6 +59,13 @@ void cmd_echo(char **args) {
   printf("%s\n", echo_stomp);
 }
 
+void cmd_type(char **args) {
+  Command *cmd = get_command(args[1]);
+  if (cmd)
+    printf("%s is a shell builtin\n", args[1]);
+  else
+    printf("%s: not found\n", args[1]);
+}
 void execute_command(const char *input) {
   char *args[10];
   char input_copy[100];
